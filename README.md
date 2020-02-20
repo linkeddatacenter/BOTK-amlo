@@ -20,7 +20,7 @@ composer require botk/amlo
 
 ## Overview
 
-This package provides some php libraries to transform  raw data into AMLO linked data.
+This package provides some php libraries to transform raw data into AMLO linked data.
 
 The goal of the libraries is to simplify the conversion of raw data (e.g. .csv or  xml file) about *unexpected activities*, *transfer*, and *risk ratings* according AMLO core ontology.
 
@@ -38,7 +38,7 @@ $options = [
 	'factsProfile' => [
 		'model'			=> 'Gianos3D',
 		'modelOptions'	=> [
-			'base' => [ 'default'=> 'http://demo.mopso.net/resource/' ]
+			'base' => [ 'default'=> 'http://data.example.org/resource/' ]
 		],
 		'datamapper'	=> function($rawdata){
 			$data = array();
@@ -62,7 +62,7 @@ $options = [
 			return $data;
 		},
 		'rawdataSanitizer' => function( $rawdata){
-			return ((count($rawdata)==16) && $rawdata[9]!='N')) ?$rawdata:false;
+			return ($rawdata[9]!='N')?$rawdata:false;
 		},	
 	],
 	'skippFirstLine'	=> false,

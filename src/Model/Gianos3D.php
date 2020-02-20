@@ -1,40 +1,77 @@
 <?php
 namespace AMLO\Model;
 
-class Gianos3D extends \BOTK\Model\AbstractModel implements \BOTK\ModelInterface
+class Gianos3D extends FIBO implements \BOTK\ModelInterface
 {
 	protected static $VOCABULARY  = [
-	   'fibo-fnd-dt-oc'    	=>  'https://spec.edmcouncil.org/fibo/ontology/FND/DatesAndTimes/Occurrences/',
-	   'fibo-fnd-pas-pas'	=>  'https://spec.edmcouncil.org/fibo/ontology/FND/ProductsAndServices/ProductsAndServices/',
-	   'fibo-fnd-arr-rt'	=>  'https://spec.edmcouncil.org/fibo/ontology/FND/Arrangements/Ratings/',
-	   'fibo-fnd-arr-rep'	=>  'https://spec.edmcouncil.org/fibo/ontology/FND/Arrangements/Reporting/',
-	   'fibo-fnd-arr-doc'	=>  'https://spec.edmcouncil.org/fibo/ontology/FND/Arrangements/Documents/',
-	   'fibo-fnd-arr-asmt'	=>  'https://spec.edmcouncil.org/fibo/ontology/FND/Arrangements/Assessments/',
-	   'fibo-fnd-arr-id'	=>  'https://spec.edmcouncil.org/fibo/ontology/FND/Arrangements/IdentifiersAndIndices/',
-	   'fibo-fnd-acc-cur'	=>  'https://spec.edmcouncil.org/fibo/ontology/FND/Accounting/CurrencyAmount/',
-	   'fibo-fnd-qt-qtu'	=>  'https://spec.edmcouncil.org/fibo/ontology/FND/Quantities/QuantitiesAndUnits/',
-	   'fibo-fnd-acc-4217'	=>  'https://spec.edmcouncil.org/fibo/ontology/FND/Accounting/ISO4217-CurrencyCodes/',
-	   'fibo-fnd-rel-rel'	=>  'https://spec.edmcouncil.org/fibo/ontology/FND/Relations/Relations/',
-	   'fibo-fnd-aap-agt'	=>  'https://spec.edmcouncil.org/fibo/ontology/FND/AgentsAndPeople/Agents/',
-	   'fibo-fnd-pty-pty'	=>  'https://spec.edmcouncil.org/fibo/ontology/FND/Parties/Parties/',
-	   'fibo-be-oac-exec'	=>  'https://spec.edmcouncil.org/fibo/ontology/BE/OwnershipAndControl/Executives/',
-	   'fibo-fbc-pas-caa'	=>  'https://spec.edmcouncil.org/fibo/ontology/FBC/ProductsAndServices/ClientsAndAccounts/',
-	   'amlo'	            =>  'http://w3id.org/amlo/core#',			
-	];
-		
-	protected static $DEFAULT_OPTIONS = [	    
-	    'subjectId'	=> [
-	        'filter'    => FILTER_DEFAULT,
-	        'flags'  	=> FILTER_REQUIRE_SCALAR,
-	    ],
+	   'amlo' =>  'http://w3id.org/amlo/core#',			
 	];
 	
-
+	const DEFAULT = ['filter'=> FILTER_DEFAULT, 'flags'=> FILTER_REQUIRE_SCALAR] ;
+	
+	protected static $DEFAULT_OPTIONS = [
+        'ndg-registry-uri' => [ 'default'=> 'http://data.example.org/resource/ndg-registry' ],
+        'activityId' => self::DEFAULT ,
+        'subjectId' => self::DEFAULT ,
+        'subjectName' => self::DEFAULT ,
+        'subjectNDG' => self::DEFAULT ,
+        'subjectCountry' => self::DEFAULT ,
+        'subjectGender' => self::DEFAULT ,
+        'subjectDateOfBirth' => self::DEFAULT ,
+        'subjectBornInMunicipality' => self::DEFAULT ,
+        'unexpectedActivityPeriod' => self::DEFAULT ,
+        'ignore' => self::DEFAULT ,
+        'unexpectedActivityStatus' => self::DEFAULT ,
+        'unexpectedActivityStatusDescription'  => self::DEFAULT ,
+        'evaluatorId' => self::DEFAULT ,
+        'unexpectedActivityNotes' => self::DEFAULT ,
+        'accountableBranchCode' => self::DEFAULT ,
+        'created' => self::DEFAULT ,
+        'unexpectedActivityRiskProfile' => self::DEFAULT ,
+	];
 	
 	public function asTurtleFragment()
 	{
 		if(is_null($this->rdf)) {
-			$uri = $this->getUri();
+		    
+		    /********************************
+		     * Individuals URIs
+		     ********************************/
+		    // unexpected activity
+		    $activityURI = $this->buildURI($this->data['activityId'], '-activity');
+		    
+		    // autonomous agent
+		    $subjectURI = $this->buildURI($this->data['subjectId'], '-agent' ) ;
+		    
+		    //Bank branch office
+		    $branchURI = $this->buildURI($this->data['accountableBranchCode'], '-branch' );
+		    
+		    //Unexpected Activity Report
+		    $reportURI = $this->buildURI($this->data['activityId'], '-report' );
+		    
+		    
+		    
+		    /********************************
+		     * Facts
+		     ********************************/
+		    # E' stata identificata una operatività inattesa di cui è responsabile un soggetto (agente)
+		    $this->addFragment('<%s> a amlo:UnexpectedActivity .', $activityURI ,false);
+		    $this->addPartyInRole($activityURI, $subjectURI, 'amlo:Accountable');
+		    
+			# Il soggetto è identificato nel registro dei clienti della banca		    
+			$this->addFragment('<%s> a fibo-fnd-aap-ppl:Person ;', $subjectURI ,false);
+			$this->addFragment(' fibo-fnd-aap-agt:hasName "%s" ;', $this->data['subjectName']);
+			$this->addFragment(' fibo-fnd-aap-ppl:hasGender "%s" ;', $this->data['subjectGender']);
+			$this->addFragment(' fibo-fnd-aap-ppl:hasDateOfBirth "%s" ;', $this->data['subjectDateOfBirth']);
+			$this->addFragment(' fibo-fnd-aap-ppl:hasPlaceOfBirth "%s" ;', $this->data['subjectBornInMunicipality']);
+			$this->rdf .= '.';
+			$this->addFiboIdentifier( $subjectURI, 'fibo-fnd-pas-pas:ClientIdentifier', $this->data['subjectId'],  $this->data['ndg-registry-uri'] );
+			
+			# l'operatività inattesa è stata segnalata alla dipendenza incaricata delle indagini
+			$this->addFragment('<%s> a amlo:ActivityReport ;', $reportURI ,false);
+			$this->addFragment(' amlo:isReportedOnDate "%s"^^xsd:dateTime  ;',$this->data['created'] ,false);
+			$this->addFragment(' fibo-fnd-arr-rep:isReportedTo <%s>  ;',$branchURI ,false);
+			$this->addFragment(' fibo-fnd-arr-rep:reportsOn <%s>  .',$activityURI ,false);
 		}
 
 		return $this->rdf;

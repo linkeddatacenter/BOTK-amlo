@@ -34,6 +34,7 @@ docker run --rm -ti -v $PWD/.:/app composer update
 ```
 
 
+
 Unit tests are performed through PHPUnit. To launch unit tests:
 
 ```shell
@@ -46,6 +47,20 @@ System tests are performed through SDaaS-ce platform. To launch functional tests
 
 ```shell
 docker run --rm -v $PWD/tests/system:/workspace --entrypoint ./do_tests.sh linkeddatacenter/sdaas-ce
+```
+
+
+Run the testing develop environment:
+
+```shell
+docker run -d --name test -v $PWD/.:/workspace -p 8080:8080 linkeddatacenter/sdaas-ce
+docker exec -ti test bash
+apk add --update curl ca-certificates
+curl https://dl.bintray.com/php-alpine/key/php-alpine.rsa.pub -o /etc/apk/keys/php-alpine.rsa.pub
+apk add --update php php-mbstring php-json php-xml php-xmlreader
+
+# test gateway:
+php7 tests/system/gateways/unexpected.php < tests/system/gateways/test_data/unexpected.csv
 ```
 
 
