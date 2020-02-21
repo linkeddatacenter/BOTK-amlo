@@ -2,13 +2,18 @@
 namespace AMLO\Model;
 
 /*
- * Some helpers for FIBO ontology
+ * Some helpers for AMLO ontology
  */
-abstract class FIBO extends \BOTK\Model\AbstractModel
+abstract class AbstractAMLO extends \BOTK\Model\AbstractModel
 {
     
     protected static $DEFAULT_OPTIONS = [
-        'base' => [ 'default'=> 'http://data.example.org/resource/' ]
+        'ndg-registry-uri' => [ 
+            'default'=> 'urn:resource:undefined-ndg-registry',
+            'filter'=>FILTER_CALLBACK, 
+            'options'=>'\BOTK\Filters::FILTER_VALIDATE_URI', 
+            'flags'=> FILTER_REQUIRE_SCALAR
+        ],
     ];
     
 	protected static $VOCABULARY  = [
@@ -28,32 +33,17 @@ abstract class FIBO extends \BOTK\Model\AbstractModel
 	   'fibo-fnd-pty-pty'	=>  'https://spec.edmcouncil.org/fibo/ontology/FND/Parties/Parties/',
 	   'fibo-be-oac-exec'	=>  'https://spec.edmcouncil.org/fibo/ontology/BE/OwnershipAndControl/Executives/',
 	   'fibo-fbc-pas-caa'	=>  'https://spec.edmcouncil.org/fibo/ontology/FBC/ProductsAndServices/ClientsAndAccounts/',
+	   'amlo' =>  'http://w3id.org/amlo/core#',
 	];
-	
-	/*
-	 * Generates an URY from an id token
-	 */
-	public function buildURI($id=null, $suffix='')
-	{
-	    assert($this->data['base']);
-	    
-	    if (empty($id)) {
-	        $idGenerator=$this->uniqueIdGenerator;
-	        $id = $idGenerator($this->data); 
-	    }
-	    
-	    return $this->data['base'] . $id . $suffix;
-	}
-	
 	
 	/**
 	 * adds a FIBO idenfifier
 	 */
-	protected function addFiboIdentifier($idenfiedURI, $type, $id, $registryURI=null, $idURI=null)
+	protected function addIdentifier($idenfiedURI, $type, $id, $registryURI=null, $idURI=null)
 	{
-	    assert( $type && $id && $idenfiedURI);
+	    assert( !empty($type) && !empty($id) && !empty($idenfiedURI) );
 	    
-	    $subjectIdURI = $this->buildURI($id, '') ;
+	    $subjectIdURI = $this->getURI($id, '') ;
 	    $this->addFragment("<$subjectIdURI> fibo-fnd-rel-rel:hasTag \"%s\" ;", $id, false);
 	    $this->addFragment(" fibo-fnd-aap-agt:identifies <%s> ;", $idenfiedURI, false );
 	    $this->addFragment(" fibo-fnd-rel-rel:isDefinedIn <%s> ;", $registryURI ,false );
@@ -67,7 +57,7 @@ abstract class FIBO extends \BOTK\Model\AbstractModel
 	*/
 	protected function addPartyInRole($subjectURI, $partyURI, $role)
 	{
-	    assert( $subjectURI && $partyURI && $role );
+	    assert( !empty($subjectURI) && !empty($partyURI) && !empty($role) );
 	    
 	    $this->rdf .= "<$subjectURI> fibo-fnd-pty-pty:hasPartyInRole [ a $role ; fibo-fnd-rel-rel:hasIdentity <$partyURI> ] .";
 	    $this->tripleCount += 3;

@@ -27,42 +27,52 @@ If you do not already have Docker on your computer,
 
 Retrieve BOTK-core's dependencies using [Composer](http://getcomposer.org/):
 
-
-```shell
-docker run --rm -ti -v $PWD/.:/app composer install
-docker run --rm -ti -v $PWD/.:/app composer update
-```
-
+	docker run --rm -ti -v $PWD/.:/app composer install
+	docker run --rm -ti -v $PWD/.:/app composer update
 
 
 Unit tests are performed through PHPUnit. To launch unit tests:
 
-```shell
-docker run --rm -ti -v $PWD/.:/app -w /app php bash
-./vendor/bin/phpunit
-exit
-```
+	docker run --rm -v $PWD/.:/app -w /app --entrypoint vendor/bin/phpunit php
+
 
 System tests are performed through SDaaS-ce platform. To launch functional tests:
 
-```shell
-docker run --rm -v $PWD/tests/system:/workspace --entrypoint ./do_tests.sh linkeddatacenter/sdaas-ce
-```
+	docker run --rm -v $PWD/.:/workspace --entrypoint tests/system/do_tests.sh linkeddatacenter/sdaas-ce:2.5.0
 
 
-Run the testing develop environment:
 
-```shell
-docker run -d --name test -v $PWD/.:/workspace -p 8080:8080 linkeddatacenter/sdaas-ce
-docker exec -ti test bash
-apk add --update curl ca-certificates
-curl https://dl.bintray.com/php-alpine/key/php-alpine.rsa.pub -o /etc/apk/keys/php-alpine.rsa.pub
-apk add --update php php-mbstring php-json php-xml php-xmlreader
+## working in system test environment
 
-# test gateway:
-php7 tests/system/gateways/unexpected.php < tests/system/gateways/test_data/unexpected.csv
-```
+run bash from the sdaas platform:
 
+	docker run -d --name test -v $PWD/.:/workspace -p 8080:8080 linkeddatacenter/sdaas-ce:2.5.0
+	docker exec -ti test bash
+
+Install php 7.3  according with https://github.com/codecasts/php-alpine
+
+	apk add --update curl ca-certificates
+	curl https://dl.bintray.com/php-alpine/key/php-alpine.rsa.pub -o /etc/apk/keys/php-alpine.rsa.pub
+	echo "https://dl.bintray.com/php-alpine/v3.8/php-7.3" >> /etc/apk/repositories
+	apk add --update php php-mbstring php-json php-xml php-xmlreader
+	ln -s /usr/bin/php7 /usr/bin/php
+
+run unit tests:
+
+	vendor/bin/phpunit
+
+test the gateway standalone:
+
+	tests/system/gateways/example1.php < tests/system/data/example1.csv
+	
+run system tests:
+
+	sdaas -f tests/system/build.sdaas --reboot
+
+free resources
+
+	exit
+	docker rm -f test
 
 ## Pull Request Process
 
