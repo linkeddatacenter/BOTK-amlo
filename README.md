@@ -3,9 +3,9 @@
 [![Build Status](https://img.shields.io/travis/linkeddatacenter/BOTK-amlo.svg?style=flat-square)](http://travis-ci.org/linkeddatacenter/BOTK-amlo)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/linkeddatacenter/BOTK-amlo/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/linkeddatacenter/BOTK-amlo/?branch=master)
 [![Code Coverage](https://img.shields.io/scrutinizer/coverage/g/linkeddatacenter/BOTK-amlo.svg?style=flat-square)](https://scrutinizer-ci.com/g/linkeddatacenter/BOTK-amlo)
-[![Latest Version](https://img.shields.io/packagist/v/botk/core.svg?style=flat-square)](https://packagist.org/packages/botk/core)
-[![Total Downloads](https://img.shields.io/packagist/dt/botk/core.svg?style=flat-square)](https://packagist.org/packages/botk/core)
-[![License](https://img.shields.io/packagist/l/botk/core.svg?style=flat-square)](https://packagist.org/packages/botk/core)
+[![Latest Version](https://img.shields.io/packagist/v/botk/amlo.svg?style=flat-square)](https://packagist.org/packages/botk/amlo)
+[![Total Downloads](https://img.shields.io/packagist/dt/botk/amlo.svg?style=flat-square)](https://packagist.org/packages/botk/amlo)
+[![License](https://img.shields.io/packagist/l/botk/amlo.svg?style=flat-square)](https://packagist.org/packages/botk/amlo)
 
 Super lightweight classes for developing gateways for [AMLO core ontology](https://gitlab.com/mopso/amlo/-/tree/master/core).
 
