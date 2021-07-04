@@ -42,38 +42,6 @@ System tests are performed through SDaaS-ce platform. To launch functional tests
 
 
 
-## working in system test environment
-
-run bash from the sdaas platform:
-
-	docker run -d --name test -v ${PWD}:/workspace -p 8080:8080 linkeddatacenter/sdaas-ce:2.5.0
-	docker exec -ti test bash
-
-install php 7.3  according with https://github.com/codecasts/php-alpine :
-
-	apk add --update curl ca-certificates
-	curl https://dl.bintray.com/php-alpine/key/php-alpine.rsa.pub -o /etc/apk/keys/php-alpine.rsa.pub
-	echo "https://dl.bintray.com/php-alpine/v3.8/php-7.3" >> /etc/apk/repositories
-	apk add --update php php-mbstring php-json php-xml php-xmlreader
-	ln -s /usr/bin/php7 /usr/bin/php
-
-run unit tests:
-
-	vendor/bin/phpunit
-
-test the gateway standalone:
-
-	tests/system/gateways/example1.php < tests/system/data/example1.csv
-	
-run system tests:
-
-	sdaas -f tests/system/build.sdaas --reboot
-
-free resources
-
-	exit
-	docker rm -f test
-
 ## Pull Request Process
 
 1. Ensure any install or build dependencies are removed before the end of the layer when doing a 
