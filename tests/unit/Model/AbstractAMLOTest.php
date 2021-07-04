@@ -18,35 +18,50 @@ class AbstractModelTest extends TestCase
 	    
 	    $subjectUri = 'urn:resource:'. md5('ITFGNNRC63S06F205A');
 	    $idUri=$subjectUri.'_i';
-	    
-	    print_r($obj->getTurtleHeader());
 
-	    $expected = $obj->getTurtleHeader() . "\n" .
+	    $expected = $obj->getTurtleHeader('urn:resource:') . "\n" .
 	        "<$idUri> a fibo-fnd-pty-pty:TaxIdentifier ;" .
 	        "lcc-lr:hasTag \"FGNNRC63S06F205A\" ;" .
 	        "lcc-lr:isMemberOf alpha2CountryId:IT ;" .
 	        "lcc-lr:identifies <$subjectUri> ." ;
-	    
-	   	$this->assertEquals($expected,(string) $obj);
-	}
 
+	   	$this->assertEquals($expected,(string) $obj);
+    }
 	
 	
 	public function testAddVatID()
 	{
 	    $obj = DummyModel::fromArray(array());
-	    $obj->addTaxIDProxy('It', '11717750969');
+	    $obj->addVatIDProxy('It', '11717750969');
 	    
 	    $subjectUri = 'urn:resource:'. md5('IT11717750969');
 	    $idUri=$subjectUri.'_i';
 
-	    $expected = $obj->getTurtleHeader() . "\n" .
-	        "<$idUri> a fibo-fnd-pty-pty:TaxIdentifier ;" .
+	    $expected = $obj->getTurtleHeader('urn:resource:') . "\n" .
+	        "<$idUri> a fibo-be-le-fbo:ValueAddedTaxIdentificationNumber ;" .
 	        "lcc-lr:hasTag \"11717750969\" ;" .
 	        "lcc-lr:isMemberOf alpha2CountryId:IT ;" .
 	        "lcc-lr:identifies <$subjectUri> .";
 	    
 	   	$this->assertEquals($expected,(string) $obj);
+	}
+	
+	
+	public function testAddVatIDwithSubject()
+	{
+	    $obj = DummyModel::fromArray(array());
+	    $obj->addVatIDProxy('It', '11717750969', 'urn:test:organization');
+	    
+	    $subjectUri = 'urn:resource:'. md5('IT11717750969');
+	    $idUri=$subjectUri.'_i';
+	    
+	    $expected = $obj->getTurtleHeader('urn:resource:') . "\n" .
+	   	    "<$idUri> a fibo-be-le-fbo:ValueAddedTaxIdentificationNumber ;" .
+	   	    "lcc-lr:hasTag \"11717750969\" ;" .
+	   	    "lcc-lr:isMemberOf alpha2CountryId:IT ;" .
+	   	    "lcc-lr:identifies <urn:test:organization> .";
+	    
+	    $this->assertEquals($expected,(string) $obj);
 	}
 
 }

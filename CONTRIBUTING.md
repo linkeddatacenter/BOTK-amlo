@@ -36,10 +36,6 @@ Unit tests are performed through PHPUnit. To launch unit tests:
 	docker run --rm -v ${PWD}:/app -w /app --entrypoint vendor/bin/phpunit php
 
 
-System tests are performed through SDaaS-ce platform. To launch functional tests:
-
-	docker run --rm -v ${PWD}:/workspace --entrypoint tests/system/do_tests.sh linkeddatacenter/sdaas-ce:2.5.0
-
 
 
 ## Pull Request Process

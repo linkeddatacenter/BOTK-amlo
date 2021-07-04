@@ -28,7 +28,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [changelog
 - ndg-registry-uri default
 - addIdentifier method
 - addPartyInRole method
-- ssytem tests and dependencies to SDaaS platform
+- sytem tests and dependencies to SDaaS platform
 
 
 ## 1.0.0
