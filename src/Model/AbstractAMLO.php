@@ -17,7 +17,8 @@ abstract class AbstractAMLO extends \BOTK\Model\AbstractModel
     
     protected function getCountryID($schemaID, $alpha2CountryId, $tag)
     {   
-        return $tag?('urn:hash::md5:'. md5(strtoupper($schemaID.$alpha2CountryId).$tag)):null ;  
+        
+        return $tag?('urn:hash::md5:'. md5(strtoupper($schemaID.$alpha2CountryId.$tag))):null ;  
     }
     
     
