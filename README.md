@@ -7,6 +7,8 @@
 [![Total Downloads](https://img.shields.io/packagist/dt/botk/amlo.svg?style=flat-square)](https://packagist.org/packages/botk/amlo)
 [![License](https://img.shields.io/packagist/l/botk/amlo.svg?style=flat-square)](https://packagist.org/packages/botk/amlo)
 
+> This package approaching EOL - will be archived on 2025 Q4
+
 This package provides some php abstract classes designed to help transforming raw data into linked data using AMLO and FIBO Ontologies.
 
 This package extends the [BOTK core library](https://github.com/linkeddatacenter/BOTK-core) and it is compatible with Mopso Brain Language Profile.
